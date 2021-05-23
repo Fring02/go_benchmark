@@ -19,6 +19,7 @@ func FastSearch(out io.Writer) {
 	if err != nil {
 		panic(err)
 	}
+	sb := strings.Builder{}
 	fileContents, err := ioutil.ReadAll(file)
 	if err != nil {
 		panic(err)
@@ -26,7 +27,6 @@ func FastSearch(out io.Writer) {
 	r := regexp.MustCompile("@")
 	seenBrowsers := map[string]bool{}
 	uniqueBrowsers := 0
-	foundUsers := ""
 	lines := strings.Split(string(fileContents), "\n")
 
 	users := []User{}
@@ -61,11 +61,11 @@ func FastSearch(out io.Writer) {
 		}
 		if isAndroid && isMSIE {
 			email := r.ReplaceAllString(user.Email, " [at] ")
-			foundUsers += fmt.Sprintf("[%d] %s <%s>\n", i, user.Name, email)
+			sb.WriteString(fmt.Sprintf("[%d] %s <%s>\n", i, user.Name, email))
 		}
 	}
 
-	fmt.Fprintln(out, "found users:\n"+foundUsers)
+	fmt.Fprintln(out, "found users:\n"+sb.String())
 	fmt.Fprintln(out, "Total unique browsers", len(seenBrowsers))
 }
 
